@@ -22,7 +22,6 @@
 
 IPAddress    apIP(10, 10, 10, 10);
 static unsigned long wifi_start_time;
-static unsigned long server_start_time;
 
 AsyncWebServer *server;
 int page_seq;
@@ -68,6 +67,7 @@ String get_value(AsyncWebServerRequest *request, char *p_name)
   }
   return (String)NULL;
 }
+
 
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
@@ -348,7 +348,7 @@ void show_assign_key(AsyncWebServerRequest *request, int state)
 
 void prepare_macro_key_name_list(char *key_name_list_html)
 {
-  int i, len, tot_len = 0;
+  int i, tot_len = 0;
   bool macro_assigned = false;
   
   memset(key_name_list_html, 0, sizeof(key_name_list_html));
@@ -386,7 +386,7 @@ void prepare_macro_key_name_list(char *key_name_list_html)
 char cmd_dropdown_html[1024];
 void prepare_cmd_dropdown(char *cmd_table)
 {
-  int i, tot_len = 0, len = 0;
+  int i, tot_len = 0;
   tot_len = sprintf(cmd_table,"<select id=\"drdn_steps\">");
   
   for(i = 0; i < key_list_last_idx * 2;i++){
@@ -467,9 +467,7 @@ int prepare_macro_step_list(char *step_list_html, int buf_size){
 void show_define_macro(AsyncWebServerRequest *request, int state)
 {
   uint8_t assign_key_idx;
-  char macro_step_list_html[1024];
-  char *key_name;
-    
+  
   if(state == 0){
     assign_key_idx = get_value(request,"key_idx").toInt();
     macro_def_init(assign_key_idx);
@@ -504,7 +502,6 @@ void init_web_server()
     "/post",
     HTTP_POST,
     [](AsyncWebServerRequest * request){
-      int conf_mode;
       String message;
       int params = request->params();
       //Serial.printf("%d params sent in\n", params);

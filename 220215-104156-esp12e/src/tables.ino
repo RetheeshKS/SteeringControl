@@ -150,7 +150,6 @@ function_map_entry function_map_table[MAX_KEY_COUNT];
 void add_function_map_entry(preset *p_table, int p_table_len, String func_name, String key_name)
 {
    int key_index, click_type = 0, p_index;
-   unsigned short key_output;
    for(key_index = 0; key_index < MAX_KEY_COUNT; key_index ++){
     if(key_name.equals(key_name_table[key_index].key_name[0])) {
       break;

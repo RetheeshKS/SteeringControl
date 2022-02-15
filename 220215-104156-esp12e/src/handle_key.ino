@@ -87,7 +87,7 @@
 
 static unsigned int cur_key_val =  KEY_IDLE_MIN_VALUE;
 static unsigned int pre_key_val =  KEY_IDLE_MIN_VALUE;
-static int min_key_val;
+static unsigned int min_key_val;
 
 int click_count;
 
