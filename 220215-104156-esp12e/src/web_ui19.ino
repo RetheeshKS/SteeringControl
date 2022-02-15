@@ -332,12 +332,6 @@ void show_assign_key(AsyncWebServerRequest *request, int state)
   } else if(state == 2) {
     //Reenable this key as user wants to cancel this key assignment.
     set_key_assigned_status(get_value(request,"key_idx").toInt(), 0);
-  } else if(state == 3){
-    //key config finished, now move to macro configuration page
-    //remove_map_file();
-    //filter_index_map();
-    //save_index_map();
-    
   }
   prepare_assign_key_name_list(key_name_list_html);
   page_seq++;
@@ -411,12 +405,6 @@ void show_assign_macro(AsyncWebServerRequest *request, int state)
   } else if(state == 1) {
     //Add the current macro to the macro table
     macro_table_add();
-    
-    //show_define_macro(request, 0);
-    //set_key_assigned_status(get_value(request,"key_idx").toInt(), 1);
-    //cmd = get_command_value(get_value(request,"key_idx").toInt());
-    //Send this command to digipot
-    //HU_assign_key(cmd);
   } else if(state == 3) {
     assign_key_idx = get_value(request,"key_idx").toInt();
     macro_table_delete(assign_key_idx);
