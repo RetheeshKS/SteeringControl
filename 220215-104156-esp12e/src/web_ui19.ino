@@ -529,7 +529,6 @@ void init_web_server()
         if(p_value.equals("Add Keys >>")){
           p_value = get_value(request, "mode");
           if(p_value.toInt() > 0){
-            conf_mode = p_value.toInt();
             key_list_last_idx = 0;
             show_add_key(request, 0);
           } else {
