@@ -573,15 +573,20 @@ void init_web_server()
 void setup() {
   int map_length = 0;
   Serial.begin(SERIAL_BAUDRATE);
-  pinMode(PIN_CONFIG_ENABLE, OUTPUT);
-  digitalWrite(PIN_CONFIG_ENABLE, LOW);
-  pinMode(PIN_CONFIG_ENABLE, INPUT);
+  //pinMode(PIN_CONFIG_ENABLE, OUTPUT);
+  //digitalWrite(PIN_CONFIG_ENABLE, LOW);
+  //pinMode(PIN_CONFIG_ENABLE, INPUT);
   init_FS();
   
-  //Check map file, load it to index map if present
-  Serial.println();
+  ui_cur_key_val = MAX_INPUT_VALUE;
+  ui_cur_key_val = analogRead(PIN_USER_INPUT);
   
-  config_enabled = digitalRead(PIN_CONFIG_ENABLE);
+  if (ui_cur_key_val < 3000){
+    config_enabled = true;
+  } else {
+    config_enabled = false;
+  }
+  //config_enabled = digitalRead(PIN_CONFIG_ENABLE);
   
   Serial.println(config_enabled?"Starting in Config Mode":"Starting in Operation mode");
   
@@ -597,6 +602,7 @@ void setup() {
     init_web_server();
     memset(index_map, INVALID_COMMAND, sizeof(index_map));
   } else {
+    //Check map file, load it to index map if present
     Serial.println("Loading index map");
     map_length = load_index_map();
     Serial.printf("Map size: %d\n", map_length);
