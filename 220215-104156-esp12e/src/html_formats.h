@@ -150,17 +150,12 @@ table{table-layout: fixed; width: 100%;}
       document.getElementById("form1").submit_btn.value = val+' %s';
       document.getElementById("form1").submit();
     }
-    /*function onAssign(val) {
+    function onAssign(val) {
       document.getElementById("form1").key_idx.value = val;
-      document.getElementById("form1").submit_btn.value = "Assign %s";
-      document.getElementById("form1").submit();
-    }*/
-    function onAssign(val_id) {
-      document.getElementById("form1").key_idx.value = val;
-      document.getElementById("form1").debug_val.value = document.getElementById("form1").getElementById(val_id).value;
       document.getElementById("form1").submit_btn.value = "Assign %s";
       document.getElementById("form1").submit();
     }
+    
     function onRmv(val) {
       ret = confirm("Are you sure you want to cancel this key.. ?");
       if(ret){
@@ -173,7 +168,6 @@ table{table-layout: fixed; width: 100%;}
   <form id="form1" action="/post" method="post">
     <input id="page_seq" name="page_seq" type="hidden" value="%d" />
     <input id="key_idx" name="key_idx" type="hidden" />
-    <input id="debug_val" name="debug_val" type="hidden" />
     <input id="submit_btn" name="submit_btn" type="hidden" />
     <div id="dv1" class="center" >
     <input type="button" id="sca_bt" name="submit_bt" onclick="onFinish(this.value);" value="Finish" /> 

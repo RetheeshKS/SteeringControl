@@ -282,7 +282,7 @@ void prepare_assign_key_name_list(char *key_name_list_html)
 {
   int i, len, tot_len = 0;
   memset(key_name_list_html, 0, sizeof(key_name_list_html));
-  Serial.printf("Start key list html: %s\n", __FUNCTION__);
+  Serial.printf("Start key list html: %s, last index: %d\n", __FUNCTION__, key_list_last_idx);
   for(i = 0; i < key_list_last_idx * 2;i++){
     if(key_assign_table[i].assigned){
         len =  sprintf(&(key_name_list_html[tot_len]),
@@ -297,12 +297,12 @@ void prepare_assign_key_name_list(char *key_name_list_html)
                                                                              i, key_assign_table[i].key_name);*/
     }
 #if DEBUG_MODE
-    /*if(key_assign_table[i].assigned){
+    if(key_assign_table[i].assigned){
       tot_len += len;
       len = sprintf(&(key_name_list_html[tot_len]),"<td>%d</td>", (int)get_command_value(i));
-    }*/
-    tot_len += len;
-    len = sprintf(&(key_name_list_html[tot_len]),"<td><input type=\"text\" id=\"key_cmd_%d\" maxlength=\"4\"/></td>", i);
+    }
+    //tot_len += len;
+    //len = sprintf(&(key_name_list_html[tot_len]),"<td><input type=\"text\" id=\"key_cmd_%d\" maxlength=\"4\"/></td>", i);
     
 #endif
     tot_len += len;
@@ -324,11 +324,10 @@ void show_assign_key(AsyncWebServerRequest *request, int state)
   } else if(state == 1) {
     //Assign this key to headunit
     set_key_assigned_status(get_value(request,"key_idx").toInt(), 1);
-    //cmd = get_command_value(get_value(request,"key_idx").toInt());
-    cmd = get_value(request,"debug_val").toInt();
+    cmd = get_command_value(get_value(request,"key_idx").toInt());
+    
     //Send this command to digipot
     HU_assign_key(cmd);
-    //increase_command_value(get_value(request,"key_idx").toInt());
   } else if(state == 2) {
     //Reenable this key as user wants to cancel this key assignment.
     set_key_assigned_status(get_value(request,"key_idx").toInt(), 0);
@@ -336,8 +335,13 @@ void show_assign_key(AsyncWebServerRequest *request, int state)
   prepare_assign_key_name_list(key_name_list_html);
   page_seq++;
   int leng = sprintf(assign_key_html,assign_key_fmt, "Key", "Key", "Key", page_seq, key_name_list_html);
+#ifdef DEBUG_MODE
+  Serial.printf("%s: Before sending, Page Size :%d\n", __FUNCTION__, leng);
+#endif
   request->send_P(200, PSTR("text/html"), assign_key_html);
-  Serial.printf("Page sent, Page Size :%d\n", leng);
+#ifdef DEBUG_MODE
+  Serial.printf("%s: Page sent, Page Size :%d\n", __FUNCTION__, leng);
+#endif
 }
 
 void prepare_macro_key_name_list(char *key_name_list_html)
@@ -576,6 +580,10 @@ void setup() {
   //pinMode(PIN_CONFIG_ENABLE, OUTPUT);
   //digitalWrite(PIN_CONFIG_ENABLE, LOW);
   //pinMode(PIN_CONFIG_ENABLE, INPUT);
+  pinMode(PIN_INPUT1_RELAY_ENABLE, OUTPUT);
+  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
+  pinMode(PIN_INPUT2_RELAY_ENABLE, OUTPUT);
+  digitalWrite(PIN_INPUT2_RELAY_ENABLE, HIGH);
   init_FS();
   
   ui_cur_key_val = MAX_INPUT_VALUE;
@@ -617,10 +625,10 @@ void setup() {
   Serial.printf("init_preset_table done\n");
   if(p)
     free(p);*/
-  pinMode(PIN_GND_RELAY_ENABLE, OUTPUT);
-  digitalWrite(PIN_GND_RELAY_ENABLE, LOW);
+  pinMode(PIN_INPUT1_RELAY_ENABLE, OUTPUT);
+  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
   pinMode(PIN_BRAKE_BYPASS_RELAY, OUTPUT);
-  digitalWrite(PIN_BRAKE_BYPASS_RELAY, LOW);
+  digitalWrite(PIN_BRAKE_BYPASS_RELAY, HIGH);
   Serial.printf("Setup is done\n");
 }
 bool HU_key_waiting = 0;

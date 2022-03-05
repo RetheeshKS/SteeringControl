@@ -1,11 +1,15 @@
 #include "LittleFS.h"
-
+#include "platform.h"
 void print_FS_info();
 
 #define MAP_FILE_NAME "mapfile.map"
 #define MACRO_FILE_NAME "macros.bin"
 extern macro_file_header_t macro_file_header;
 extern  macro_node_t *macro_head;
+
+#ifdef ESP32
+#define LittleFS LITTLEFS
+#endif
 
 int load_index_map() {
   int read_count = 0;
@@ -110,6 +114,7 @@ void init_FS()
   LittleFS.begin();
   print_FS_info();
 }
+#ifndef ESP32
 void print_FS_info()
 {
   FSInfo fsinfo;
@@ -117,11 +122,18 @@ void print_FS_info()
   
   LittleFS.info(fsinfo);
 
-  Serial.printf("fsinfo  totalBytes=%u, usedBytes=%u, blockSize=%u, pageSize=%u, maxOpenFiles=%u, maxPathLength=%u\n",fsinfo.totalBytes, fsinfo.usedBytes, fsinfo.blockSize, fsinfo.pageSize, fsinfo.maxOpenFiles, fsinfo.maxPathLength);
+  Serial.printf("fsinfo  totalBytes=%u, usedBytes=%u, blockSize=%u, pageSize=%u, maxOpenFiles=%u, maxPathLength=%u\n",fsinfo.totalBytes, fsinfo., fsinfo.blockSize, fsinfo.pageSize, fsinfo.maxOpenFiles, fsinfo.maxPathLength);
 
 
 }
+#else
+void print_FS_info()
+{
+  Serial.printf("fsinfo  totalBytes=%u, usedBytes=%u\n",
+                             LittleFS.totalBytes(), LittleFS.usedBytes());
 
+}
+#endif
 void remove_map_file()
 {
 #if DEBUG_MODE

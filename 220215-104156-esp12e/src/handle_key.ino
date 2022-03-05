@@ -72,9 +72,9 @@
 #define PIN_DIGIPOT_CS SS
 #else
 #define PIN_DIGIPOT_CS 15
-#define HIGH_RES_VALUE 255
 #endif
 
+#define HIGH_RES_VALUE 255
 #define KEY_IDLE_GO_SLEEP_DURATION 30000 // 30 seconds key idle time to go to sleep.
 #define CMD_ENABLE_DURATION 500
 #define READ_WINDOW_WIDTH 350
@@ -126,7 +126,7 @@ void HU_assign_key(uint8_t cmd)
   SPI.transfer(DIGI_POT_COMMAND);
   SPI.transfer(cmd);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
-  digitalWrite(PIN_GND_RELAY_ENABLE, HIGH);
+  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
 #if DEBUG_MODE
   int start_idx, end_idx;
   start_idx = end_idx = min_key_val;
@@ -154,7 +154,7 @@ void run_macro_step()
     SPI.transfer(DIGI_POT_COMMAND);
     SPI.transfer(*(macro_table[macro_idx] + macro_step_idx));
     digitalWrite(PIN_DIGIPOT_CS, HIGH);
-    digitalWrite(PIN_GND_RELAY_ENABLE, HIGH);
+    digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
     macro_step_idx ++;
   }
   if (macro_step_idx >= macro_file_header.length_list[macro_idx]){
@@ -173,7 +173,7 @@ void start_command()
   SPI.transfer(DIGI_POT_COMMAND);
   SPI.transfer(cmd);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
-  digitalWrite(PIN_GND_RELAY_ENABLE, HIGH);
+  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
   cmd_start_time = cur_time;
   cmd_stop_time = cmd_start_time + CMD_ENABLE_DURATION;
   macro_started = false;
@@ -198,7 +198,7 @@ void start_command()
 void stop_command()
 {
   cmd_start_time = 0;
-  digitalWrite(PIN_GND_RELAY_ENABLE, LOW);
+  digitalWrite(PIN_INPUT1_RELAY_ENABLE, LOW);
   digitalWrite(PIN_DIGIPOT_CS, LOW);
   SPI.transfer(DIGI_POT_COMMAND);
   SPI.transfer(HIGH_RES_VALUE);
@@ -209,9 +209,13 @@ void stop_command()
 #endif
   if (macro_started){
     cmd_start_time = millis();
+  #if DEBUG_MODE
     Serial.printf("%s :%lu\n", __FUNCTION__, cmd_start_time);
+  #endif
     cmd_stop_time = cmd_start_time + (CMD_ENABLE_DURATION/2);
+  #if DEBUG_MODE
     Serial.printf("%s :%lu\n", __FUNCTION__, cmd_start_time);
+  #endif
     run_macro_step();
   }
 }

@@ -1,6 +1,7 @@
 #ifndef COMMON_H
-#define DEBUG_MODE 0
 #define COMMON_H
+#include "platform.h"
+#define DEBUG_MODE 1
 #include <SPI.h>
 
 #ifdef ESP32
@@ -9,12 +10,15 @@
   #define PIN_USER_INPUT 34
   #define MAX_INPUT_VALUE 4096
   #define KEY_IDLE_MIN_VALUE  1970
+  #define PIN_INPUT1_RELAY_ENABLE 26
+  #define PIN_INPUT2_RELAY_ENABLE 25
+  #define PIN_BRAKE_BYPASS_RELAY 27
 #else
   #include <ESP8266WiFi.h>
   #include <ESPAsyncTCP.h>
   #define PIN_USER_INPUT A0
   #define PIN_CONFIG_ENABLE D1
-  #define PIN_GND_RELAY_ENABLE D6
+  #define PIN_INPUT1_RELAY_ENABLE D6
   #define PIN_BRAKE_BYPASS_RELAY D2
   #define MAX_INPUT_VALUE 1024
   #define KEY_IDLE_MIN_VALUE  MAX_INPUT_VALUE
