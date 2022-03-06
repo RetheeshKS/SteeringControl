@@ -104,7 +104,6 @@ bool save_index_map() {
     for(i = 1;i < macro_itr->macro_length;i++){
       macro_file.write((uint8_t *)(&(macro_itr->commands[i].command)), (sizeof(uint8_t))); // Saving the commands starting from second step
     }
-    
   }
   this_file.close();
   

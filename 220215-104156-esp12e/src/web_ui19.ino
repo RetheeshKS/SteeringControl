@@ -4,6 +4,8 @@
 #include "tables.h"
 #include "html_formats.h"
 
+#define HTML_BUFFER_SIZE 8192
+
 #define THIRTY_SECONDS 30000
 #define ONEHALF_MINUTS 90000
 #define START_MAGIC 0xCAFEBABE
@@ -91,7 +93,7 @@ void init_all_data_structures()
   if(html_buffer){
     free(html_buffer);
   }
-  html_buffer = (char *)malloc(8192);
+  html_buffer = (char *)malloc(HTML_BUFFER_SIZE); // 8192
   if(key_assign_table){
     free(key_assign_table);
     key_assign_table = NULL;
@@ -437,7 +439,9 @@ extern int last_step_index;
 int prepare_macro_step_list(char *step_list_html, int buf_size){
   int i, tot_len = 0;
   memset(step_list_html, 0, buf_size);
-  //Serial.printf("Start key list html\n");
+#if DEBUG_MODE
+  Serial.printf("Start prepare_macro_step_list\n");
+#endif
   for(i = 0; i < last_step_index;i++){
     tot_len +=  sprintf(&(step_list_html[tot_len]),
        "<tr><td style=\"background-color:#FF0000\" width=\"100%\" onClick=\"onClearStep('%d');\">%s</td>", i, new_macro->commands[i].key_name);
@@ -472,7 +476,7 @@ void show_define_macro(AsyncWebServerRequest *request, int state)
   //prepare_macro_step_list(macro_step_list_html);
   page_seq++;
   int leng = sprintf(html_buffer,define_macro_fmt_part1, page_seq, new_macro->key_name);
-  leng += prepare_macro_step_list(&html_buffer[leng], (sizeof(html_buffer)- leng));
+  leng += prepare_macro_step_list(&html_buffer[leng], HTML_BUFFER_SIZE - leng);
   leng += sprintf(&html_buffer[leng],define_macro_fmt_part2);
   request->send_P(200, PSTR("text/html"), html_buffer);
   Serial.printf("Page sent, Page Size :%d\n", leng);
