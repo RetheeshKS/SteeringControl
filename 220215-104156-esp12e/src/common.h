@@ -7,8 +7,9 @@
 #ifdef ESP32
   #include <WiFi.h>
   #include <AsyncTCP.h>
+  #define ANALOG_RESOLUTION 11
   #define PIN_USER_INPUT 34
-  #define MAX_INPUT_VALUE 4096
+  #define MAX_INPUT_VALUE 2048
   #define KEY_IDLE_MIN_VALUE  1970
   #define PIN_INPUT1_RELAY_ENABLE 26
   #define PIN_INPUT2_RELAY_ENABLE 25
@@ -17,7 +18,7 @@
   #include <ESP8266WiFi.h>
   #include <ESPAsyncTCP.h>
   #define PIN_USER_INPUT A0
-  #define PIN_CONFIG_ENABLE D1
+  #define PIN_INPUT2_RELAY_ENABLE D1
   #define PIN_INPUT1_RELAY_ENABLE D6
   #define PIN_BRAKE_BYPASS_RELAY D2
   #define MAX_INPUT_VALUE 1024

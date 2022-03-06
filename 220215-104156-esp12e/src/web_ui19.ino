@@ -589,11 +589,17 @@ void setup() {
   pinMode(PIN_INPUT2_RELAY_ENABLE, OUTPUT);
   digitalWrite(PIN_INPUT2_RELAY_ENABLE, HIGH);
   init_FS();
-  
+#ifdef ESP32
+  analogReadResolution(ANALOG_RESOLUTION);
+#endif
   ui_cur_key_val = MAX_INPUT_VALUE;
   ui_cur_key_val = analogRead(PIN_USER_INPUT);
   
-  if (ui_cur_key_val < 3000){
+#ifdef ESP32
+  if (ui_cur_key_val < 2000){
+#else
+  if (ui_cur_key_val < 1000){
+#endif
     config_enabled = true;
   } else {
     config_enabled = false;

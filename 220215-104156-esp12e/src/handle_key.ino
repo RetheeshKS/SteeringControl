@@ -82,8 +82,8 @@
 #define MINIMUM_CLICK_WIDTH 80
 
 
-#define DIGI_POT_COMMAND 0x00
-
+#define DIGI_POT_1_COMMAND 0x00
+#define DIGI_POT_2_COMMAND 0x10
 
 static unsigned int cur_key_val =  KEY_IDLE_MIN_VALUE;
 static unsigned int pre_key_val =  KEY_IDLE_MIN_VALUE;
@@ -123,7 +123,7 @@ void HU_assign_key(uint8_t cmd)
   Serial.printf("%s: Sending command : index:%d, commnd:%d, double-click: %d \n", __FUNCTION__, min_key_val, cmd, d_click_flag);
 #endif
   digitalWrite(PIN_DIGIPOT_CS, LOW);
-  SPI.transfer(DIGI_POT_COMMAND);
+  SPI.transfer(DIGI_POT_1_COMMAND);
   SPI.transfer(cmd);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
   digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
@@ -151,7 +151,7 @@ void run_macro_step()
     Serial.printf("%s: Sending command : %d \n", __FUNCTION__, *(macro_table[macro_idx] + macro_step_idx));
 #endif
     digitalWrite(PIN_DIGIPOT_CS, LOW);
-    SPI.transfer(DIGI_POT_COMMAND);
+    SPI.transfer(DIGI_POT_1_COMMAND);
     SPI.transfer(*(macro_table[macro_idx] + macro_step_idx));
     digitalWrite(PIN_DIGIPOT_CS, HIGH);
     digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
@@ -170,7 +170,7 @@ void start_command()
   Serial.printf("%s(time:%lu): Sending command : index:%d, commnd:%d, double-click: %d \n", __FUNCTION__, cmd_start_time, min_key_val, WORDLSBYTE(index_map[d_click_flag][min_key_val]), d_click_flag);
 #endif
   digitalWrite(PIN_DIGIPOT_CS, LOW);
-  SPI.transfer(DIGI_POT_COMMAND);
+  SPI.transfer(DIGI_POT_1_COMMAND);
   SPI.transfer(cmd);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
   digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
@@ -200,7 +200,7 @@ void stop_command()
   cmd_start_time = 0;
   digitalWrite(PIN_INPUT1_RELAY_ENABLE, LOW);
   digitalWrite(PIN_DIGIPOT_CS, LOW);
-  SPI.transfer(DIGI_POT_COMMAND);
+  SPI.transfer(DIGI_POT_1_COMMAND);
   SPI.transfer(HIGH_RES_VALUE);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
   digitalWrite(PIN_BRAKE_BYPASS_RELAY, LOW);
