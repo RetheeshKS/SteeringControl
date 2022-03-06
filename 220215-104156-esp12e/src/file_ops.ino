@@ -1,22 +1,26 @@
-#include "LittleFS.h"
-#include "platform.h"
-void print_FS_info();
 
-#define MAP_FILE_NAME "mapfile.map"
-#define MACRO_FILE_NAME "macros.bin"
+#include "platform.h"
+#ifdef ESP32
+  #include "FS.h"
+  #include "LITTLEFS.h"
+  #define LittleFS LITTLEFS
+#else
+  #include "LittleFS.h"
+#endif
+
+void print_FS_info();
+#define FORMAT_LITTLEFS_IF_FAILED true
+#define MAP_FILE_NAME "/mapfile.map"
+#define MACRO_FILE_NAME "/macros.bin"
 extern macro_file_header_t macro_file_header;
 extern  macro_node_t *macro_head;
-
-#ifdef ESP32
-#define LittleFS LITTLEFS
-#endif
 
 int load_index_map() {
   int read_count = 0;
   int i, j;
   File this_file = LittleFS.open(MAP_FILE_NAME, "r");
   if (!this_file) { // failed to open the file, retrn empty result
-    Serial.println("Could not read index map, file open failed...");
+    Serial.printf("Could not read index map, file open failed...");
     return 0;
   }
   /*while (this_file.available()) {
@@ -73,11 +77,11 @@ bool save_index_map() {
 
 #if DEBUG_MODE
   Serial.println("===================Saving Index Map=====================");
-  for(int i=0;i<MAX_INPUT_VALUE * 2;i++){
+ /* for(int i=0;i<MAX_INPUT_VALUE * 2;i++){
     Serial.printf("%X ", (index_map[i/MAX_INPUT_VALUE][i%MAX_INPUT_VALUE]));
     if((i%50 == 0) && (i!=0) ) Serial.println();
   }
-  Serial.println();
+  Serial.println();*/
   Serial.println("======================================================");
 #endif 
   write_count = this_file.write((uint8_t *)(&index_map[0]), (sizeof(index_map)));
@@ -110,8 +114,10 @@ bool save_index_map() {
 
 void init_FS()
 {
- 
-  LittleFS.begin();
+  if(!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)){
+    Serial.printf("%s: LITTLEFS Mount Failed...!!!\n", __FUNCTION__);
+    return;
+  }
   print_FS_info();
 }
 #ifndef ESP32

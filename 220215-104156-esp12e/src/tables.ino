@@ -34,12 +34,12 @@ void init_preset_table(void **p_t, char *p_data)
   int len, i;
   *preset_table = NULL;
   if(!preset_table){
-    Serial.printf("\n%s: Error: preset table empty..\n"); 
+    Serial.printf("\n%s: Error: preset table empty..\n", __FUNCTION__); 
     return;
   }
   
   if(!preset_file_data){
-    Serial.printf("\n%s: Error: preset data empty..\n");
+    Serial.printf("\n%s: Error: preset data empty..\n", __FUNCTION__);
     return;
   }
   p_head = (preset_header *)preset_file_data;
