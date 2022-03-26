@@ -1,18 +1,16 @@
 #include <Arduino.h>
+#include "common.h"
 #ifdef ESP32
   #include <WiFi.h>
   #include <AsyncTCP.h>
-  #define PIN_USER_INPUT_34 34
-  #define MAX_INPUT_VALUE 4096
 #else
   #include <ESP8266WiFi.h>
   #include <ESPAsyncTCP.h>
-  #define PIN_USER_INPUT_34 A0
-  #define MAX_INPUT_VALUE 1024
 #endif
 #define START_MAGIC 0xCAFEBABE
 #define END_MAGIC 0xDEADBEAF
 
+extern unsigned short index_map[2][MAX_INPUT_VALUE];
 
 macro_node_t *macro_head;
 macro_node_t *new_macro;
@@ -266,8 +264,8 @@ void final_update_index_map()
         Serial.printf("map[%d]:%d\n", i,index_map[click_type][i]);
       }
       if((i < MAX_INPUT_VALUE -1) &&  (index_map[click_type][i] != index_map[click_type][i+1])){
-        Serial.printf("map[%d]:%d\n", i,index_map[click_type][i]);
-        Serial.printf("map[%d]:%d\n", i+1,index_map[click_type][i+1]);
+        Serial.printf("map[%d]:%X\n", i,(unsigned short)index_map[click_type][i]);
+        Serial.printf("map[%d]:%X\n", i+1,(unsigned short)index_map[click_type][i+1]);
       }
     }
 #endif
