@@ -50,8 +50,8 @@ int load_index_map() {
   }
   this_file.read((uint8_t *)(&macro_file_header), (sizeof(macro_file_header)));
   for (i = 0; i<macro_file_header.num_macros;i++){
-    macro_table[i] = (uint8_t *)malloc(macro_file_header.length_list[i]);
-    this_file.read((uint8_t *)(macro_table[i]), macro_file_header.length_list[i]);
+    macro_table[i] = (uint16_t *)malloc(macro_file_header.length_list[i] *(sizeof(uint16_t)));
+    this_file.read((uint8_t *)(macro_table[i]), macro_file_header.length_list[i]*(sizeof(uint16_t)));
   }
   this_file.close();
 #if DEBUG_MODE
@@ -102,7 +102,7 @@ bool save_index_map() {
   write_count = macro_file.write((uint8_t *)(&macro_file_header), (sizeof(macro_file_header)));
   for(macro_itr = macro_head; macro_itr; macro_itr= macro_itr->next){
     for(i = 1;i < macro_itr->macro_length;i++){
-      macro_file.write((uint8_t *)(&(macro_itr->commands[i].command)), (sizeof(uint8_t))); // Saving the commands starting from second step
+      macro_file.write((uint8_t *)(&(macro_itr->commands[i].command)), (sizeof(uint16_t))); // Saving the commands starting from second step
     }
   }
   this_file.close();

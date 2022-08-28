@@ -106,7 +106,8 @@ int cur_cmd_value;
 
 unsigned long key_press_time;
 int d_click_flag = 0;
-
+uint8_t cmd;
+uint8_t click_type;
 int tmp_val;
 extern unsigned short index_map[2][MAX_INPUT_VALUE];
 
@@ -117,16 +118,20 @@ int inline get_key_command()
 
 extern unsigned long key_assign_start_time;
 extern bool HU_key_waiting;
-void HU_assign_key(uint8_t cmd)
+
+uint8_t digipot_enable_commands[2] = {DIGI_POT_1_COMMAND, DIGI_POT_2_COMMAND};
+uint8_t HU_input_relays[2] = {PIN_INPUT1_RELAY_ENABLE, PIN_INPUT2_RELAY_ENABLE};
+
+void HU_assign_key(uint8_t cmd, int click_type)
 {
 #if DEBUG_MODE
   Serial.printf("%s: Sending command : index:%d, commnd:%d, double-click: %d \n", __FUNCTION__, min_key_val, cmd, d_click_flag);
 #endif
   digitalWrite(PIN_DIGIPOT_CS, LOW);
-  SPI.transfer(DIGI_POT_1_COMMAND);
+  SPI.transfer(digipot_enable_commands[click_type]);
   SPI.transfer(cmd);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
-  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
+  digitalWrite(HU_input_relays[click_type], HIGH);
 #if DEBUG_MODE
   int start_idx, end_idx;
   start_idx = end_idx = min_key_val;
@@ -146,22 +151,24 @@ bool macro_started;
 int start_gap_inc;
 void run_macro_step()
 {
-  if (macro_step_idx < macro_file_header.length_list[macro_idx]){
+    if (macro_step_idx < macro_file_header.length_list[macro_idx]){
 #if DEBUG_MODE
     Serial.printf("%s: Sending command : %d \n", __FUNCTION__, *(macro_table[macro_idx] + macro_step_idx));
 #endif
+    click_type = WORDMSBYTE(*(macro_table[macro_idx] + macro_step_idx));
+    cmd = WORDLSBYTE(*(macro_table[macro_idx] + macro_step_idx));
     digitalWrite(PIN_DIGIPOT_CS, LOW);
-    SPI.transfer(DIGI_POT_1_COMMAND);
-    SPI.transfer(*(macro_table[macro_idx] + macro_step_idx));
+    SPI.transfer(digipot_enable_commands[click_type]);
+    SPI.transfer(cmd);
     digitalWrite(PIN_DIGIPOT_CS, HIGH);
-    digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
+    digitalWrite(HU_input_relays[click_type], HIGH);
     macro_step_idx ++;
   }
   if (macro_step_idx >= macro_file_header.length_list[macro_idx]){
     macro_started = false;
   }
 }
-uint8_t cmd;
+
 void start_command()
 {
   cmd = WORDLSBYTE(index_map[d_click_flag][min_key_val]);
@@ -170,10 +177,10 @@ void start_command()
   Serial.printf("%s(time:%lu): Sending command : index:%d, commnd:%d, double-click: %d \n", __FUNCTION__, cmd_start_time, min_key_val, WORDLSBYTE(index_map[d_click_flag][min_key_val]), d_click_flag);
 #endif
   digitalWrite(PIN_DIGIPOT_CS, LOW);
-  SPI.transfer(DIGI_POT_1_COMMAND);
+  SPI.transfer(digipot_enable_commands[d_click_flag]);
   SPI.transfer(cmd);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
-  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
+  digitalWrite(HU_input_relays[d_click_flag], HIGH);
   cmd_start_time = cur_time;
   cmd_stop_time = cmd_start_time + CMD_ENABLE_DURATION;
   macro_started = false;
@@ -199,8 +206,11 @@ void stop_command()
 {
   cmd_start_time = 0;
   digitalWrite(PIN_INPUT1_RELAY_ENABLE, LOW);
+  digitalWrite(PIN_INPUT2_RELAY_ENABLE, LOW);
   digitalWrite(PIN_DIGIPOT_CS, LOW);
   SPI.transfer(DIGI_POT_1_COMMAND);
+  SPI.transfer(HIGH_RES_VALUE);
+  SPI.transfer(DIGI_POT_2_COMMAND);
   SPI.transfer(HIGH_RES_VALUE);
   digitalWrite(PIN_DIGIPOT_CS, HIGH);
   digitalWrite(PIN_BRAKE_BYPASS_RELAY, LOW);

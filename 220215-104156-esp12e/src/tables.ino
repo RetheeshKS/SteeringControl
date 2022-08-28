@@ -217,11 +217,11 @@ void final_update_index_map()
      memset(&macro_file_header, 0, sizeof(macro_file_header));
      macro_itr = macro_head;
      while(macro_itr){
-      WORDLSBYTE(index_map[macro_itr->click_type][macro_itr->key_value]) = macro_itr->commands[0].command;
+      WORDLSBYTE(index_map[macro_itr->click_type][macro_itr->key_value]) = WORDLSBYTE(macro_itr->commands[0].command);
       WORDMSBYTE(index_map[macro_itr->click_type][macro_itr->key_value]) = macro_node_index;
-      for(i=1; i< macro_itr->macro_length; i++){
+      /*for(i=1; i< macro_itr->macro_length; i++){
         
-      }
+      }*/
       // Set macro file header values, this will be saved in the save index map function
       macro_file_header.length_list[macro_node_index] = macro_itr->macro_length -1;
       macro_file_header.num_macros ++;
@@ -359,13 +359,14 @@ void macro_add_step(String key_name)
 #if DEBUG_MODE
   Serial.printf("%s: Got key index : %d\n", __FUNCTION__, assign_key_idx);
 #endif
-  new_macro->commands[last_step_index].command = get_command_value(assign_key_idx);
+  WORDLSBYTE(new_macro->commands[last_step_index].command) = get_command_value(assign_key_idx);
+  WORDMSBYTE(new_macro->commands[last_step_index].command)= (uint8_t) assign_key_idx%2; 
 #if DEBUG_MODE
-  Serial.printf("%s: Got command value : %d\n", __FUNCTION__, new_macro->commands[last_step_index].command);
+  Serial.printf("%s: Got command value : 0x%X\n", __FUNCTION__, new_macro->commands[last_step_index].command);
 #endif
   strcpy(new_macro->commands[last_step_index].key_name, key_name.c_str());
 #if DEBUG_MODE
-  Serial.printf("%s: Stored command value : %d, for %s \n", __FUNCTION__, new_macro->commands[last_step_index].command, new_macro->commands[last_step_index].key_name);
+  Serial.printf("%s: Stored command value : 0x%X, for %s \n", __FUNCTION__, new_macro->commands[last_step_index].command, new_macro->commands[last_step_index].key_name);
 #endif
   last_step_index++;
 }

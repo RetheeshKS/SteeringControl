@@ -40,7 +40,7 @@ typedef struct {
 
 typedef struct {
   char key_name[MAX_KEYNAME_LENGTH + 1];
-  uint8_t command;
+  uint16_t command;
 } macro_step_entry;
 struct macro_node {
   uint16_t click_type;

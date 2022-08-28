@@ -34,7 +34,7 @@ bool config_enabled = false;
 char *html_buffer = NULL;
 int key_list_last_idx = 0;
 unsigned short index_map[2][MAX_INPUT_VALUE];
-uint8_t *macro_table[MAX_NUM_MACROS];
+uint16_t *macro_table[MAX_NUM_MACROS];
 int progress_val = 0; // scan progress value
 int key_scan_enable = 0;
 static unsigned int ui_pre_key_val = KEY_IDLE_MIN_VALUE;
@@ -43,7 +43,7 @@ static unsigned int ui_cur_key_val;
 extern void init_key_handle_vars();
 extern void init_macro_tables();
 extern void handle_key();
-extern void HU_assign_key(uint8_t cmd);
+extern void HU_assign_key(uint8_t cmd, int double_click);
 key_assign_entry *key_assign_table;
 
 extern key_entry key_name_table[20];
@@ -329,7 +329,7 @@ void show_assign_key(AsyncWebServerRequest *request, int state)
     cmd = get_command_value(get_value(request,"key_idx").toInt());
     
     //Send this command to digipot
-    HU_assign_key(cmd);
+    HU_assign_key(cmd, get_value(request,"key_idx").toInt()%2);
   } else if(state == 2) {
     //Reenable this key as user wants to cancel this key assignment.
     set_key_assigned_status(get_value(request,"key_idx").toInt(), 0);
