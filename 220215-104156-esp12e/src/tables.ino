@@ -167,18 +167,18 @@ void add_function_map_entry(preset *p_table, int p_table_len, String func_name, 
 }
 
 unsigned char auto_command;
-int pioneer_commands[]={1, 4 , 8, 12 , 16, 7, 9, 13, 17, 18, 21, 23, 29, 33, 42, 49, 71, 96};
+int cmd_values[][9]= {{4, 8, 12, 16, 24, 29, 35, 40, 56}, {4, 8, 12, 16, 24, 29, 35, 40, 56}};
 
 void init_auto_output_values()
 {
    auto_command = 0;
 }
 
-uint8_t get_next_auto_output_value()
+uint8_t get_next_auto_output_value(int click_type)
 {
    unsigned char auto_cmd = 0xFF;
-   if(auto_command < sizeof(pioneer_commands)){
-    auto_cmd = pioneer_commands[auto_command];
+   if(auto_command < sizeof(cmd_values[0])){
+    auto_cmd = cmd_values[click_type][auto_command];
     auto_command +=1;
    }
    return (auto_cmd);
@@ -200,11 +200,12 @@ void final_update_index_map()
    if(preset_mode == 0){
     init_auto_output_values();
     for(i = 0; i < key_list_last_idx; i++){
-      *((uint8_t *)&index_map[0][(int)key_name_table[i].key_value]) = get_next_auto_output_value();
+      WORDLSBYTE(index_map[0][(int)key_name_table[i].key_value]) = get_next_auto_output_value(0);
     }
+    init_auto_output_values();
     for(i = 0; i < key_list_last_idx; i++){
       //*((uint8_t *)&index_map[1][(int)key_name_table[i].key_value]) = (uint8_t)(index_map[0][(int)key_name_table[i].key_value] + 40);
-      *((uint8_t *)&index_map[1][(int)key_name_table[i].key_value]) = get_next_auto_output_value();
+      WORDLSBYTE(index_map[1][(int)key_name_table[i].key_value]) = get_next_auto_output_value(1);
     }
    }else if(preset_mode == 1){
     for(i = 0; i < key_list_last_idx; i++){
@@ -329,10 +330,10 @@ void filter_index_map()
        
        cmd = (uint8_t)index_map[click_index][map_index];
        for(tol_idx = 0; tol_idx <= KEY_INPUT_TOLERANCE; tol_idx ++){
-         if((map_index + tol_idx) < MAX_INPUT_VALUE && (uint8_t)index_map[click_index][map_index + tol_idx] == cmd){
+         if((map_index + tol_idx) < MAX_INPUT_VALUE && WORDLSBYTE(index_map[click_index][map_index + tol_idx]) == cmd){
             WORDLSBYTE(index_map[click_index][map_index + tol_idx]) = INVALID_COMMAND;
          }
-         if((map_index - tol_idx) >= 0 && (uint8_t)index_map[click_index][map_index - tol_idx] == cmd){
+         if((map_index - tol_idx) >= 0 && WORDLSBYTE(index_map[click_index][map_index - tol_idx]) == cmd){
             WORDLSBYTE(index_map[click_index][map_index - tol_idx]) = INVALID_COMMAND;
          }
        }
