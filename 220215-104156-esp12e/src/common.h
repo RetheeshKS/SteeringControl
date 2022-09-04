@@ -11,9 +11,9 @@
   #define PIN_USER_INPUT 34
   #define MAX_INPUT_VALUE 2048
   #define KEY_IDLE_MIN_VALUE  1970
-  #define PIN_INPUT1_RELAY_ENABLE 26
-  #define PIN_INPUT2_RELAY_ENABLE 25
-  #define PIN_BRAKE_BYPASS_RELAY 27
+  #define PIN_INPUT1_RELAY_ENABLE 27
+  #define PIN_INPUT2_RELAY_ENABLE 26
+  #define PIN_BRAKE_BYPASS_RELAY 25
 #else
   #include <ESP8266WiFi.h>
   #include <ESPAsyncTCP.h>
