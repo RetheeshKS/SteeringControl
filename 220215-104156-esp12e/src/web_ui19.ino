@@ -585,9 +585,9 @@ void setup() {
   //digitalWrite(PIN_CONFIG_ENABLE, LOW);
   //pinMode(PIN_CONFIG_ENABLE, INPUT);
   pinMode(PIN_INPUT1_RELAY_ENABLE, OUTPUT);
-  digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
+  digitalWrite(PIN_INPUT1_RELAY_ENABLE, LOW);
   pinMode(PIN_INPUT2_RELAY_ENABLE, OUTPUT);
-  digitalWrite(PIN_INPUT2_RELAY_ENABLE, HIGH);
+  digitalWrite(PIN_INPUT2_RELAY_ENABLE, LOW);
   init_FS();
 #ifdef ESP32
   analogReadResolution(ANALOG_RESOLUTION);
@@ -638,7 +638,7 @@ void setup() {
   pinMode(PIN_INPUT1_RELAY_ENABLE, OUTPUT);
   digitalWrite(PIN_INPUT1_RELAY_ENABLE, HIGH);
   pinMode(PIN_BRAKE_BYPASS_RELAY, OUTPUT);
-  digitalWrite(PIN_BRAKE_BYPASS_RELAY, HIGH);
+  digitalWrite(PIN_BRAKE_BYPASS_RELAY, LOW);
   Serial.printf("Setup is done\n");
 }
 bool HU_key_waiting = 0;

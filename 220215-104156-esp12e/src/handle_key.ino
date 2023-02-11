@@ -191,6 +191,7 @@ void start_command()
     macro_started = true;
   }
   if (cmd == INVALID_COMMAND){
+      Serial.printf("Sending invalid command\n");
       digitalWrite(PIN_BRAKE_BYPASS_RELAY, HIGH);
   }
   
