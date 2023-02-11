@@ -169,10 +169,21 @@ void run_macro_step()
   }
 }
 
+#define test 1
+
 void start_command()
 {
-  cmd = WORDLSBYTE(index_map[d_click_flag][min_key_val]);
-  
+  #if test
+    static int cd = 4;
+    if (cd == 0){
+      cmd = 255;
+    } else {
+      cmd = cd;
+    }
+    cd = (cd + 4) % 40;
+  #else
+    cmd = WORDLSBYTE(index_map[d_click_flag][min_key_val]);
+  #endif
 #if DEBUG_MODE
   Serial.printf("%s(time:%lu): Sending command : index:%d, commnd:%d, double-click: %d \n", __FUNCTION__, cmd_start_time, min_key_val, WORDLSBYTE(index_map[d_click_flag][min_key_val]), d_click_flag);
 #endif
